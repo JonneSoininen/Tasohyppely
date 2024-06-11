@@ -38,16 +38,27 @@ public class PlayerController : MonoBehaviour
         }//if
         */
 
-        moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, 0f, Input.GetAxis("Vertical") * moveSpeed);
+        // Old movedirection
+        //moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, moveDirection.y, Input.GetAxis("Vertical") * moveSpeed);
 
-        if (Input.GetButtonDown("Jump"))
+        //Store the current y-direction
+        float yStore = moveDirection.y;
+        moveDirection = (transform.forward * Input.GetAxis("Vertical")) + (transform.right * Input.GetAxis("Horizontal"));
+        moveDirection = moveDirection.normalized * moveSpeed;
+        moveDirection.y = yStore;
+
+        if (controller.isGrounded)
         {
-            // Jumping when Jump-button is pressed. Jump default button is spacebar.
-            moveDirection.y = jumpForce;
-        }//if
+            moveDirection.y = 0f;
+            if (Input.GetButtonDown("Jump"))
+            {
+                // Jumping when Jump-button is pressed. Jump default button is spacebar.
+                moveDirection.y = jumpForce;
+            }//if
+        }
 
         // Add gravity to jumps
-        moveDirection.y = moveDirection.y + (Physics.gravity.y * gravityScale);
+        moveDirection.y = moveDirection.y + (Physics.gravity.y * gravityScale * Time.deltaTime);
         controller.Move(moveDirection * Time.deltaTime);
     }
 }
