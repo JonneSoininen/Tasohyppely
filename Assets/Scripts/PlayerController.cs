@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 moveDirection;
 
+    //Animations for playercharacter (AC_Player)
+    private Animator animator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +23,7 @@ public class PlayerController : MonoBehaviour
 
         // Initialize the controller to player
         controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -46,19 +50,48 @@ public class PlayerController : MonoBehaviour
         moveDirection = (transform.forward * Input.GetAxis("Vertical")) + (transform.right * Input.GetAxis("Horizontal"));
         moveDirection = moveDirection.normalized * moveSpeed;
         moveDirection.y = yStore;
+        animator.SetBool("IsWalking", true);
+
 
         if (controller.isGrounded)
         {
-            moveDirection.y = 0f;
+            // Player is on the ground
+            animator.SetBool("IsJumping", false);
+
+            if (moveDirection.x != 0 || moveDirection.z != 0)
+            {
+                animator.SetBool("IsWalking", true);
+                animator.SetBool("IsIdle", false);
+            }
+            else
+            {
+                animator.SetBool("IsWalking", false);
+                animator.SetBool("IsIdle", true);
+            }
+
             if (Input.GetButtonDown("Jump"))
             {
-                // Jumping when Jump-button is pressed. Jump default button is spacebar.
+                // Jump logic
                 moveDirection.y = jumpForce;
-            }//if
+                animator.SetBool("IsJumping", true);
+                animator.SetBool("IsWalking", false);
+                animator.SetBool("IsIdle", false);
+            }
+        }
+        else
+        {
+            // Player is in the air
+            animator.SetBool("IsJumping", true);
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsIdle", false);
         }
 
         // Add gravity to jumps
         moveDirection.y = moveDirection.y + (Physics.gravity.y * gravityScale * Time.deltaTime);
         controller.Move(moveDirection * Time.deltaTime);
+
+
     }
+
+
 }
