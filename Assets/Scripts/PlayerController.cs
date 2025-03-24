@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDirection;
 
     //Animations for playercharacter (AC_Player)
-    //private Animator animator;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
 
         // Initialize the controller to player
         controller = GetComponent<CharacterController>();
-        //animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -50,40 +50,40 @@ public class PlayerController : MonoBehaviour
         moveDirection = (transform.forward * Input.GetAxis("Vertical")) + (transform.right * Input.GetAxis("Horizontal"));
         moveDirection = moveDirection.normalized * moveSpeed;
         moveDirection.y = yStore;
-        //animator.SetBool("IsWalking", true);
+        animator.SetBool("IsWalking", true);
 
 
         if (controller.isGrounded)
         {
             // Player is on the ground
-            //animator.SetBool("IsJumping", false);
+            animator.SetBool("IsJumping", false);
 
             if (moveDirection.x != 0 || moveDirection.z != 0)
             {
-                //animator.SetBool("IsWalking", true);
-                //animator.SetBool("IsIdle", false);
+                animator.SetBool("IsWalking", true);
+                animator.SetBool("IsIdle", false);
             }
             else
             {
-                //animator.SetBool("IsWalking", false);
-                //animator.SetBool("IsIdle", true);
+                animator.SetBool("IsWalking", false);
+                animator.SetBool("IsIdle", true);
             }
 
             if (Input.GetButtonDown("Jump"))
             {
                 // Jump logic
                 moveDirection.y = jumpForce;
-                //animator.SetBool("IsJumping", true);
-                //animator.SetBool("IsWalking", false);
-                //animator.SetBool("IsIdle", false);
+                animator.SetBool("IsJumping", true);
+                animator.SetBool("IsWalking", false);
+                animator.SetBool("IsIdle", false);
             }
         }
         else
         {
             // Player is in the air
-            //animator.SetBool("IsJumping", true);
-            //animator.SetBool("IsWalking", false);
-            //animator.SetBool("IsIdle", false);
+            animator.SetBool("IsJumping", true);
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsIdle", false);
         }
 
         // Add gravity to jumps
